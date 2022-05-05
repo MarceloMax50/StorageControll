@@ -7,6 +7,7 @@ import api from '../../service/api';
 import Cardproduto from '../../componentes/Cardproduto/index';
 import Header from '../../componentes/Header';
 import * as Utils from '../../utils/utils';
+import Footer from '../../componentes/Footer';
 
 export default function Listaprodutos({ navigation }) {
 
@@ -86,6 +87,7 @@ export default function Listaprodutos({ navigation }) {
                         )
                 }
             </ScrollView >
+            <Footer navigation={navigation}></Footer>
         </View>
     );
 }
