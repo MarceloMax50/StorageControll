@@ -1,4 +1,3 @@
-const { response } = require('express');
 const Product = require('../model/Product');
 
 class ProductController {

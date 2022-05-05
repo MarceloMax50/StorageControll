@@ -9,15 +9,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#6b798f',
         alignItems: 'center',
         borderBottomColor: '#000',
-        borderBottomWidth: 5,
-        marginBottom: 15,
     },
     textoBotao: {
         color: '#FFF',
         fontSize: 20,
     },
     botao: {
-        width: '30%',
+        width: '40%',
         height: 50,
         borderColor: "#000",
         borderWidth: 2,

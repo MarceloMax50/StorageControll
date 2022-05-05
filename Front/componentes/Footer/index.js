@@ -12,7 +12,7 @@ export default function Footer({ navigation }) {
                 <Text style={styles.textoBotao}> Produtos </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('Listaprodutos')}>
+            <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('Listacategorias')}>
                 <Text style={styles.textoBotao}> Categorias </Text>
             </TouchableOpacity>
         </View>

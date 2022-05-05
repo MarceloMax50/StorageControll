@@ -4,12 +4,12 @@ import {
 import { useState, useEffect } from 'react';
 import styles from './styles';
 import api from '../../service/api';
-import Cardproduto from '../../componentes/Cardproduto/index';
+import Cardcategoria from '../../componentes/Cardcategoria/index';
 import Header from '../../componentes/Header';
 import * as Utils from '../../utils/utils';
 import Footer from '../../componentes/Footer';
 
-export default function Listaprodutos({ navigation }) {
+export default function Listacategorias({ navigation }) {
 
     const [lista, setLista] = useState([]);
     const [load, setLoad] = useState(false);
@@ -17,7 +17,7 @@ export default function Listaprodutos({ navigation }) {
     async function carregaLista() {
         try {
             setLoad(true);
-            let resposta = (await api.get('/storageControll/product'));
+            let resposta = (await api.get('/storageControll/Category'));
             Utils.sleep(2000);
             setLista(resposta.data);
             setLoad(false);
@@ -30,25 +30,26 @@ export default function Listaprodutos({ navigation }) {
     useEffect(
         () => {
             console.log('executando useffect da listagem');
-            carregaLista(); //necessário método pois aqui não pode utilizar await...
+            carregaLista();
         }, []);
 
     function novoRegistro() {
-        navigation.navigate('Cadastroproduto', {
+        console.log('Clico ADD');
+        navigation.navigate('Cadastrocategoria', {
             inclusao: true,
         });
     }
 
-    async function editaRegistro(produto) {
-        console.log(produto);
+    async function editaRegistro(categoria) {
+        console.log(categoria);
 
-        navigation.navigate('Cadastroproduto', {
-            produto, inclusao: false
+        navigation.navigate('Cadastrocategoria', {
+            categoria, inclusao: false
         });
     }
 
     function removerElemento(id) {
-        Alert.alert('Atenção', 'Confirma a remoção do produto?',
+        Alert.alert('Atenção', 'Confirma a remoção da categoria?',
             [
                 {
                     text: 'Sim',
@@ -65,7 +66,7 @@ export default function Listaprodutos({ navigation }) {
         console.log('O ID: ' + id);
 
         try {
-            api.delete('/storageControll/product/' + id).
+            api.delete('/storageControll/Category/' + id).
                 then(() => { carregaLista() });
         } catch (e) {
             Alert.alert(e.toString());
@@ -74,15 +75,15 @@ export default function Listaprodutos({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Header metodoAdd={novoRegistro} exibeIconeNovoRegistro={true} novoRegistro={true} txtHeader={'Cadastro de Produtos'} />
+            <Header metodoAdd={novoRegistro} exibeIconeNovoRegistro={true} novoRegistro={true} txtHeader={'Cadastro de Categorias'} />
             <ScrollView style={styles.areaScroolView}>
                 {
                     load
                         ?
                         <ActivityIndicator size="large" color="#00ff00" style={styles.waiting} />
                         :
-                        lista.map((produto, index) => (
-                            <Cardproduto key={index.toString()} produto={produto} editar={editaRegistro} remover={removerElemento} />
+                        lista.map((categoria, index) => (
+                            <Cardcategoria key={index.toString()} categoria={categoria} editar={editaRegistro} remover={removerElemento} />
                         )
                         )
                 }

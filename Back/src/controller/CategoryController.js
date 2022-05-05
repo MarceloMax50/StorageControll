@@ -1,9 +1,18 @@
-const { response } = require('express');
 const Category = require('../model/Category');
+
 class CategoryController {
     async create(req, res) {
-        const produto = new Category(req.body);
-        await produto.save()
+        const categoria = new Category(req.body);
+        await Category.count()
+            .then(
+                response => {
+                    categoria.code = response + 1;
+                }
+            )
+            .catch(error => {
+                categoria.code = 1;
+            })
+        await categoria.save()
             .then(response => {
                 return res.status(200).json(response);
             })
@@ -39,9 +48,8 @@ class CategoryController {
     }
 
     async update(req, res) {
-        const { code } = req.params;
-        const produto = req.body;
-        await Category.findByIdAndUpdate(code, produto)
+        const categoria = new Category(req.body);
+        await Category.findByIdAndUpdate(categoria._id, req.body)
             .then(
                 response => {
                     return res.status(200).json(response);
