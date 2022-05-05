@@ -22,7 +22,7 @@ export default function Cadastroproduto({ navigation }) {
   const [stockquantity, setStockquantity] = useState(produto && produto.stockquantity && produto.stockquantity.toString());
   const [minstock, setMinstock] = useState(produto && produto.minstock && produto.minstock.toString());
   const [active, setActive] = useState((produto && produto.active != undefined && produto.active.toString()) || '');
-  const [category, setCategory] = useState(produto && produto.CidadeId);
+  const [category, setCategory] = useState((produto && produto.category) || '');
   const [categorys, setCategorys] = useState([]);
   const [load, setLoad] = useState(false);
 
@@ -34,7 +34,7 @@ export default function Cadastroproduto({ navigation }) {
 
   async function carregamentosUseEffect() {
     setLoad(true);
-    //  await carregaCategorys();
+    await carregaCategorys();
     setLoad(false);
   }
 
@@ -42,6 +42,7 @@ export default function Cadastroproduto({ navigation }) {
     try {
       if (categorys.length == 0) {
         let resposta = await api.get('/storageControll/category');
+        console.log('Categorias ' + resposta.data);
         setCategorys(resposta.data);
       }
     }
@@ -59,20 +60,28 @@ export default function Cadastroproduto({ navigation }) {
       minstock,
       category,
     };
-
-    if (inclusao) {
-      await api.post('/storageControll/product', objproduto)
-        .then(() => navigation.navigate('Listaprodutos'))
-        .catch(error => trataErroAPI(error));
+    if (!description ||
+      !active ||
+      !stockquantity ||
+      !minstock ||
+      !category) {
+      Alert.alert('Atenção', 'Preencha TODOS os campos');
     }
     else {
-      console.log('Atualizando objeto', objproduto);
-      await api.delete('/storageControll/product/' + produto._id)
-        .then(() => console.log('Deletado'))
-        .catch(error => trataErroAPI(error));
-      await api.post('/storageControll/product', objproduto)
-        .then(() => navigation.navigate('Listaprodutos'))
-        .catch(error => trataErroAPI(error));
+      if (inclusao) {
+        await api.post('/storageControll/product', objproduto)
+          .then(() => navigation.navigate('Listaprodutos'))
+          .catch(error => trataErroAPI(error));
+      }
+      else {
+        console.log('Atualizando objeto', objproduto);
+        await api.delete('/storageControll/product/' + produto._id)
+          .then(() => console.log('Deletado'))
+          .catch(error => trataErroAPI(error));
+        await api.post('/storageControll/product', objproduto)
+          .then(() => navigation.navigate('Listaprodutos'))
+          .catch(error => trataErroAPI(error));
+      }
     }
   }
 
@@ -125,20 +134,20 @@ export default function Cadastroproduto({ navigation }) {
               <Picker.Item label="Não" value="false" style={styles.feminino} />
             </Picker>
 
-            <Text style={styles.labelCampoEdicao}>Cidade</Text>
+            <Text style={styles.labelCampoEdicao}>Categoria</Text>
             <Picker
               selectedValue={category}
               onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
               dropdownIconColor={'#038a27'}
-              prompt='Selecione a cidade...'
+              prompt='Selecione a categoria'
             >
+              <Picker.Item label="" value="" enabled={false} />
               {
-                categorys.map((cidade, index) => (
-                  <Picker.Item key={index.toString()} label={cidade.description}
-                    value={cidade.code} style={styles.cidade} />
+                categorys.map((categoria, index) => (
+                  <Picker.Item key={index.toString()} label={categoria.description}
+                    value={categoria.code} style={styles.categoria} />
                 ))
               }
-
             </Picker>
 
             <View style={styles.areaBotoes}>
