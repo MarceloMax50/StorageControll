@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "C:\\Users\\Dell\\AppData\\Roaming\\npm\\nodemon src/index.js  --inspect"
+    "start": "C:\\Users\\Usuário\\AppData\\Roaming\\npm\\nodemon src/index.js  --inspect"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.3",
     "mongoose": "^6.2.10"
   }
