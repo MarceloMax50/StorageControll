@@ -6,27 +6,27 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        marginTop: StatusBar.currentHeight,                  
+        marginTop: StatusBar.currentHeight,
     },
-    areaScroolView:{
+    areaScroolView: {
         width: '95%',
-    },  
-
-    areaScroolViewForm:{
-        width: '95%',        
     },
-    labelCampoEdicao:{
+
+    areaScroolViewForm: {
+        width: '95%',
+    },
+    labelCampoEdicao: {
         fontSize: 20,
         fontWeight: 'bold',
         color: '#038a27',
     },
-    caixaTexto: {        
+    caixaTexto: {
         fontSize: 18,
         borderBottomWidth: 1,
         borderBottomColor: '#038a27',
         height: 35,
-        width: '100%',        
-        marginBottom: 20,     
+        width: '100%',
+        marginBottom: 20,
     },
     botao: {
         width: '30%',
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#040d59',        
+        backgroundColor: '#040d59',
     },
     botaoCancela: {
         width: '30%',
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#f5ad42',
     },
-    
+
     areaBotoes: {
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -60,25 +60,33 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontSize: 20,
     },
-    caixaSexo:{                
+    caixaSexo: {
         height: 35,
-        width: '100%',        
-        marginBottom: 20,     
+        width: '100%',
+        marginBottom: 20,
     },
-    masculino:{        
+    masculino: {
         fontSize: 20,
-        color: 'blue',        
+        color: 'blue',
     },
-    feminino:{
+    feminino: {
         fontSize: 20,
-        color: '#f78dcd',        
+        color: '#f78dcd',
     },
-    cidade:{
+    cidade: {
         fontSize: 20,
     },
-    waiting:{
-       marginTop: 100,
-    }
+    waiting: {
+        marginTop: 100,
+    },
+    filter: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        height: 60,
+        alignItems: 'center',
+        borderBottomColor: '#000',
+    },
 
 });
 

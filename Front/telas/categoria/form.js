@@ -5,12 +5,7 @@ import {
 import { useState, useEffect } from 'react';
 import styles from './styles';
 import Header from '../../componentes/Header';
-import DateTimeInput from '../../componentes/DateTimeInput';
 import api from '../../service/api';
-import { format } from 'date-fns';
-import { Picker } from '@react-native-picker/picker'
-import * as Utils from '../../utils/utils';
-
 export default function Cadastrocategoria({ navigation }) {
 
   let props = navigation.state.params;
@@ -56,10 +51,10 @@ export default function Cadastrocategoria({ navigation }) {
 
   function trataErroAPI(error) {
     if (error.response && error.response.data && error.response.data.erro) {
-      Alert.alert(error.response.data.erro);
+      Alert.alert(JSON.stringify(error));
     }
     else {
-      Alert.alert(error.toString());
+      Alert.alert(JSON.stringify(error));
     }
   }
 
