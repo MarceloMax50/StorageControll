@@ -13,19 +13,34 @@ import { Picker } from '@react-native-picker/picker'
 export default function Listaprodutos({ navigation }) {
 
     const [lista, setLista] = useState([]);
-    const [listaFilter, setListaFilter] = useState([]);
+    const [listaFiltered, setListaFiltered] = useState([]);
     const [load, setLoad] = useState(false);
     const [status, setStatus] = useState([]);
-    const [refresh, setRefresh] = useState(true);
+
+
+    async function processEffect() {
+        if (load) {
+            console.log("Carregando dados...");
+            await carregaLista();
+        }
+    }
+
+    useEffect(
+        () => {
+            console.log('executando useffect da listagem');
+            processEffect(); //necessário método pois aqui não pode utilizar await...
+        }, [load]);
 
     async function carregaLista() {
         try {
             setLoad(true);
             let resposta = (await api.get('/storageControll/product'));
-            setStatus(["Ativos", "Inativos", "Todos"]);
+            setStatus([true, false, "Todos"]);
             Utils.sleep(2000);
+            console.log("Status: " + status);
+            console.log(resposta);
+            setListaFiltered(resposta.data);
             setLista(resposta.data);
-            setListaFilter(resposta.data);
             setLoad(false);
 
         } catch (e) {
@@ -37,7 +52,7 @@ export default function Listaprodutos({ navigation }) {
         () => {
             console.log('executando useffect da listagem');
             carregaLista(); //necessário método pois aqui não pode utilizar await...
-        }, [refresh]);
+        }, []);
 
     function novoRegistro() {
         navigation.navigate('Cadastroproduto', {
@@ -81,27 +96,24 @@ export default function Listaprodutos({ navigation }) {
         console.log('Status: ' + itemValue)
         if (itemValue != 'Todos') {
             setStatus(itemValue);
-            setListaFilter(lista.filter(item => item.active == itemValue).map(x => x));
-            console.log('Status1 comparação: ' + itemValue + " = " + JSON.stringify(listaFilter[0]));
-            setRefresh(true);
+            setListaFiltered(lista.filter(item => item.active == itemValue).map(x => x));
+            console.log('Status1 comparação: ' + itemValue + " = " + JSON.stringify(listaFiltered[0]));
         }
         else {
-            setListaFilter(lista);
+            setListaFiltered(lista);
             console.log('Status2: ' + itemValue)
-            setRefresh(true);
         }
         console.log('Status3: ' + itemValue)
-        setRefresh(true);
+        setLoad(true);
     }
 
-    // function converteStatus(itemValue) {
-    //     if (itemValue === "Ativos") {
-    //         return true;
-    //     }
-    //     else if (itemValue === "Inativos") {
-    //         return false;
-    //     }
-    // }
+    const handleOrderClick = (param) => {
+        let newList = [...listaFiltered];
+        console.log(newList)
+        newList.sort((a, b) => (a[param] > b[param] ? 1 : b[param] > a[param] ? -1 : 0));
+        console.log(newList)
+        setListaFiltered(newList);
+    };
 
     return (
         <View style={styles.container}>
@@ -113,7 +125,7 @@ export default function Listaprodutos({ navigation }) {
                     selectedValue={status}
                     onValueChange={(itemValue, itemIndex) => filterStatus(itemValue)}
                     dropdownIconColor={'#038a27'}
-                    prompt='Selecione o active...'>
+                    prompt='Selecione o status...'>
 
                     <Picker.Item label="Todos" value="Todos" key="Todos" />
                     <Picker.Item label="Ativo" value={true} key="Ativo" />
@@ -124,9 +136,9 @@ export default function Listaprodutos({ navigation }) {
                 <Text >Ordenar por:</Text>
                 <Picker
                     selectedValue={status}
-                    onValueChange={(itemValue, itemIndex) => filterStatus(itemValue)}
+                    onValueChange={(itemValue, itemIndex) => handleOrderClick(itemValue)}
                     dropdownIconColor={'#038a27'}
-                    prompt='Selecione o active...'>
+                    prompt='Ordenar Por...'>
 
                     <Picker.Item label="Código" value="code" key="code" />
                     <Picker.Item label="Descrição " value="description" key="description" />
@@ -137,14 +149,14 @@ export default function Listaprodutos({ navigation }) {
 
             <ScrollView style={styles.areaScroolView}>
                 {
-                    load
-                        ?
-                        <ActivityIndicator size="large" color="#00ff00" style={styles.waiting} />
-                        :
-                        listaFilter.map((produto, index) => (
-                            <Cardproduto key={index.toString()} produto={produto} editar={editaRegistro} remover={removerElemento} />
-                        )
-                        )
+                    //load
+                    //   ?
+                    //<ActivityIndicator size="large" color="#00ff00" style={styles.waiting} />
+                    // :
+                    listaFiltered.map((produto, index) => (
+                        <Cardproduto key={index.toString()} produto={produto} editar={editaRegistro} remover={removerElemento} />
+                    )
+                    )
                 }
             </ScrollView >
             <Footer navigation={navigation}></Footer>
