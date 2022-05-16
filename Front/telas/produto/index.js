@@ -1,5 +1,6 @@
 import {
-    Alert, Text, View, ScrollView, ActivityIndicator
+    Alert, Text, TextInput, TouchableOpacity, View, ScrollView,
+    ActivityIndicator
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import styles from './styles';
@@ -16,18 +17,17 @@ export default function Listaprodutos({ navigation }) {
     const [listaFiltered, setListaFiltered] = useState([]);
     const [load, setLoad] = useState(false);
     const [status, setStatus] = useState([]);
-
+    const [order, setOrder] = useState([]);
+    const [stock, setStock] = useState([]);
 
     async function processEffect() {
         if (load) {
-            console.log("Carregando dados...");
             await carregaLista();
         }
     }
 
     useEffect(
         () => {
-            console.log('executando useffect da listagem');
             processEffect(); //necessário método pois aqui não pode utilizar await...
         }, [load]);
 
@@ -37,11 +37,14 @@ export default function Listaprodutos({ navigation }) {
             let resposta = (await api.get('/storageControll/product'));
             setStatus([true, false, "Todos"]);
             Utils.sleep(2000);
-            console.log("Status: " + status);
-            console.log(resposta);
             setListaFiltered(resposta.data);
             setLista(resposta.data);
             setLoad(false);
+
+            let hasAlert = lista.some(item => item.stockquantity <= item.minstock);
+            if (hasAlert) {
+                lista.filter(item => item.stockquantity <= item.minstock).map(x => Alert.alert('Atenção', 'Itens abaixo do minimo: ' + x.description));
+            }
 
         } catch (e) {
             Alert.alert(e.toString());
@@ -50,7 +53,6 @@ export default function Listaprodutos({ navigation }) {
 
     useEffect(
         () => {
-            console.log('executando useffect da listagem');
             carregaLista(); //necessário método pois aqui não pode utilizar await...
         }, []);
 
@@ -61,8 +63,6 @@ export default function Listaprodutos({ navigation }) {
     }
 
     async function editaRegistro(produto) {
-        console.log(produto);
-
         navigation.navigate('Cadastroproduto', {
             produto, inclusao: false
         });
@@ -83,8 +83,6 @@ export default function Listaprodutos({ navigation }) {
     }
 
     async function efetivaRemocao(id) {
-        console.log('O ID: ' + id);
-
         try {
             api.delete('/storageControll/product/' + id).
                 then(() => { carregaLista() });
@@ -93,25 +91,32 @@ export default function Listaprodutos({ navigation }) {
         }
     }
     function filterStatus(itemValue) {
-        console.log('Status: ' + itemValue)
+        setStatus(itemValue);
+
         if (itemValue != 'Todos') {
-            setStatus(itemValue);
             setListaFiltered(lista.filter(item => item.active == itemValue).map(x => x));
-            console.log('Status1 comparação: ' + itemValue + " = " + JSON.stringify(listaFiltered[0]));
         }
         else {
             setListaFiltered(lista);
-            console.log('Status2: ' + itemValue)
         }
-        console.log('Status3: ' + itemValue)
-        setLoad(true);
     }
 
-    const handleOrderClick = (param) => {
+    function filterStock(itemValue) {
+        setStock(itemValue);
+
+        if (itemValue != 'Todos') {
+            setListaFiltered(lista.filter(item => item.stockquantity <= item.minstock).map(x => x));
+        }
+        else {
+            setListaFiltered(lista);
+        }
+    }
+
+    const filterOrder = (param) => {
+        setOrder(param);
+
         let newList = [...listaFiltered];
-        console.log(newList)
         newList.sort((a, b) => (a[param] > b[param] ? 1 : b[param] > a[param] ? -1 : 0));
-        console.log(newList)
         setListaFiltered(newList);
     };
 
@@ -119,7 +124,7 @@ export default function Listaprodutos({ navigation }) {
         <View style={styles.container}>
             <Header metodoAdd={novoRegistro} exibeIconeNovoRegistro={true} novoRegistro={true} txtHeader={'Cadastro de Produtos'} />
 
-            <View style={styles.filter}>
+            <ScrollView style={styles.areaScroolView}>
                 <Text >Status</Text>
                 <Picker
                     selectedValue={status}
@@ -133,21 +138,29 @@ export default function Listaprodutos({ navigation }) {
 
                 </Picker>
 
-                <Text >Ordenar por:</Text>
+                <Text >Ordenar</Text>
                 <Picker
-                    selectedValue={status}
-                    onValueChange={(itemValue, itemIndex) => handleOrderClick(itemValue)}
+                    selectedValue={order}
+                    onValueChange={(itemValue, itemIndex) => filterOrder(itemValue)}
                     dropdownIconColor={'#038a27'}
                     prompt='Ordenar Por...'>
 
-                    <Picker.Item label="Código" value="code" key="code" />
-                    <Picker.Item label="Descrição " value="description" key="description" />
-                    <Picker.Item label="Quantidade no estoque" value="stockquantity" key="stockquantity" />
+                    <Picker.Item label="Código, decrescente" value="code" key="code" />
+                    <Picker.Item label="Descrição, alfabética" value="description" key="description" />
+                    <Picker.Item label="Quantidade, decrescente" value="stockquantity" key="stockquantity" />
 
                 </Picker>
-            </View>
+                <Text >Estoque</Text>
+                <Picker
+                    selectedValue={stock}
+                    onValueChange={(itemValue, itemIndex) => filterStock(itemValue)}
+                    dropdownIconColor={'#038a27'}
+                    prompt='Quantidade no estoque inferior ou igual ao mínimo'>
 
-            <ScrollView style={styles.areaScroolView}>
+                    <Picker.Item label="Todos" value="Todos" key="Todos" />
+                    <Picker.Item label="Verificar" value={true} key="Verificar" />
+
+                </Picker>
                 {
                     //load
                     //   ?

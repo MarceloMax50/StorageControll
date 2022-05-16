@@ -29,20 +29,16 @@ export default function Listacategorias({ navigation }) {
 
     useEffect(
         () => {
-            console.log('executando useffect da listagem');
             carregaLista();
         }, []);
 
     function novoRegistro() {
-        console.log('Clico ADD');
         navigation.navigate('Cadastrocategoria', {
             inclusao: true,
         });
     }
 
     async function editaRegistro(categoria) {
-        console.log(categoria);
-
         navigation.navigate('Cadastrocategoria', {
             categoria, inclusao: false
         });
@@ -63,8 +59,6 @@ export default function Listacategorias({ navigation }) {
     }
 
     async function efetivaRemocao(id) {
-        console.log('O ID: ' + id);
-
         try {
             api.delete('/storageControll/Category/' + id).
                 then(() => { carregaLista() });

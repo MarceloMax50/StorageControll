@@ -39,9 +39,7 @@ export default function Cadastrocategoria({ navigation }) {
         .catch(error => trataErroAPI(error));
     }
     else {
-      console.log('Atualizando objeto', objcategoria);
       await api.delete('/storageControll/Category/' + categoria._id)
-        .then(() => console.log('Deletado'))
         .catch(error => trataErroAPI(error));
       await api.post('/storageControll/Category', objcategoria)
         .then(() => navigation.navigate('Listacategorias'))

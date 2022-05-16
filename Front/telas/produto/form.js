@@ -42,7 +42,6 @@ export default function Cadastroproduto({ navigation }) {
     try {
       if (categorys.length == 0) {
         let resposta = await api.get('/storageControll/category');
-        console.log('Categorias ' + resposta.data);
         setCategorys(resposta.data);
       }
     }
@@ -74,9 +73,7 @@ export default function Cadastroproduto({ navigation }) {
           .catch(error => trataErroAPI(error));
       }
       else {
-        console.log('Atualizando objeto', objproduto);
         await api.delete('/storageControll/product/' + produto._id)
-          .then(() => console.log('Deletado'))
           .catch(error => trataErroAPI(error));
         await api.post('/storageControll/product', objproduto)
           .then(() => navigation.navigate('Listaprodutos'))
